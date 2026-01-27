@@ -51,7 +51,7 @@ export class AuthService {
     return this.jwtService.sign({ sub: user.id, nickname: user.nickname });
   }
 
-
+  
   async generateAccsessToken(refreshToken: string){
     let payload;
     try {
