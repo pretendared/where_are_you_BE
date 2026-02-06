@@ -1,8 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards, Req, UnauthorizedException, UseInterceptors } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthGuard } from '@nestjs/passport';
-import { FileInterceptor } from '@nestjs/platform-express';
-
+import { userUpdateDto } from './dto/user-update.dto';
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -14,14 +13,13 @@ export class AuthController {
   @Get('login/google/callback')
   @UseGuards(AuthGuard('google'))
   async googleLoginCallback(@Req() req) {
-    return await this.authService.googleLogin(req.user);
+    return await this.authService.Login(req.user);
   }
 
   @Patch('nickname')
   @UseGuards(AuthGuard('jwt'))
-  async setNickname(@Req() req, @Body('nickname') nickname: string) {
-    const userId = req.user.sub;
-    return await this.authService.setNickname(userId, nickname);
+  async setNickname(@Req() req, @Body('nickname') updateDto: userUpdateDto) {
+    return await this.authService.update(req.user.userId, updateDto);
   }
 
   @Post('token/refresh')
