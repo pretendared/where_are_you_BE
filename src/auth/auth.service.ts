@@ -34,11 +34,11 @@ export class AuthService {
       return {
         statusCode: 201,
         needNickname: true,
-        accsessToken: this.jwtService.sign({ sub: user.id,}, { secret: process.env.JWT_ACCSESS_SECRET, expiresIn: '30m' }),
+        accsessToken: this.jwtService.sign({ sub: user.id }, { secret: process.env.JWT_ACCSESS_SECRET, expiresIn: '30m' }),
       }
     }
-    const accsessToken = this.jwtService.sign({ sub: user.id, nickname: user.nickname }, { secret: process.env.JWT_ACCSESS_SECRET, expiresIn: '30m' });
-    const refreshToken = this.jwtService.sign({ sub: user.id, nickname: user.nickname }, { secret: process.env.JWT_REFRESH_SECRET, expiresIn: '7d' });
+    const accsessToken = this.jwtService.sign({ sub: user.id, role: user.role, nickname: user.nickname }, { secret: process.env.JWT_ACCSESS_SECRET, expiresIn: '30m' });
+    const refreshToken = this.jwtService.sign({ sub: user.id }, { secret: process.env.JWT_REFRESH_SECRET, expiresIn: '7d' });
 
     await this.redis.set(`refreshToken:${user.id}`, refreshToken, 'EX', 7 * 24 * 60 * 60); // 7일
     return { 
@@ -69,8 +69,8 @@ export class AuthService {
     
     await this.userRepository.save(user);
 
-    const accsessToken = this.jwtService.sign({ sub: user.id, nickname: user.nickname }, { secret: process.env.JWT_ACCSESS_SECRET, expiresIn: '30m' });
-    const refreshToken = this.jwtService.sign({ sub: user.id, nickname: user.nickname }, { secret: process.env.JWT_REFRESH_SECRET, expiresIn: '7d' });
+    const accsessToken = this.jwtService.sign({ sub: user.id, role: user.role, nickname: user.nickname }, { secret: process.env.JWT_ACCSESS_SECRET, expiresIn: '30m' });
+    const refreshToken = this.jwtService.sign({ sub: user.id }, { secret: process.env.JWT_REFRESH_SECRET, expiresIn: '7d' });
     await this.redis.set(`refreshToken:${user.id}`, refreshToken, 'EX', 7 * 24 * 60 * 60); // 7일
     return {accsessToken, refreshToken}
   }
@@ -90,8 +90,8 @@ export class AuthService {
       throw new UnauthorizedException('탈취된 refresh token');
     }
 
-    const newAccsess = this.jwtService.sign({ sub: payload.sub, nickname: payload.nickname }, { secret: process.env.JWT_ACCSESS_SECRET, expiresIn: '30m' });
-    const newRefresh = this.jwtService.sign({ sub: payload.id, nickname: payload.nickname }, { secret: process.env.JWT_REFRESH_SECRET, expiresIn: '7d' });
+    const newAccsess = this.jwtService.sign({ sub: payload.sub, role: payload.role }, { secret: process.env.JWT_ACCSESS_SECRET, expiresIn: '30m' });
+    const newRefresh = this.jwtService.sign({ sub: payload.id }, { secret: process.env.JWT_REFRESH_SECRET, expiresIn: '7d' });
     
     await this.redis.set(`refreshToken:${payload.sub}`, newRefresh, 'EX', 7 * 24 * 60 * 60);
 
