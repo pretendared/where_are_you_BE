@@ -1,4 +1,13 @@
-import { Column, Entity, PrimaryColumn } from "typeorm";
+import { BoardUserEntity } from "src/board/entities/board.user.entity";
+import { Column, Entity, OneToMany, PrimaryColumn } from "typeorm";
+
+export enum UserProvider{
+  google = 'google',
+  kakao = "kakao",
+  naver = 'naver',
+  apple = "apple",
+  email = 'email'
+}
 
 @Entity()
 export class User {
@@ -11,10 +20,11 @@ export class User {
   @Column({ unique: true, default: null, nullable: true })
   nickname: string;
 
+
   @Column({ nullable: true, default: null })
   profileImage: string | null;
 
-  @Column({default: 'google'})
+  @Column({type: 'enum', enum: UserProvider, default: UserProvider.email})
   provider: string;
 
   @Column({nullable: true, default: null})
