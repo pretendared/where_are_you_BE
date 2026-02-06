@@ -20,6 +20,8 @@ export class User {
   @Column({ unique: true, default: null, nullable: true })
   nickname: string;
 
+  @Column()
+  name: string;
 
   @Column({ nullable: true, default: null })
   profileImage: string | null;
@@ -32,4 +34,7 @@ export class User {
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
+
+  @OneToMany(() => BoardUserEntity, (boardUser) => boardUser.user)
+  boardUser: BoardUserEntity[];
 }
