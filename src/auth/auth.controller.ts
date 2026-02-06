@@ -16,9 +16,9 @@ export class AuthController {
     return await this.authService.Login(req.user);
   }
 
-  @Patch('nickname')
+  @Patch('update')
   @UseGuards(AuthGuard('jwt'))
-  async setNickname(@Req() req, @Body('nickname') updateDto: userUpdateDto) {
+  async updateUser(@Req() req, @Body('nickname') updateDto: userUpdateDto) {
     return await this.authService.update(req.user.userId, updateDto);
   }
 
