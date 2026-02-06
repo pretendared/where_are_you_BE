@@ -29,8 +29,11 @@ export class User {
   @Column({type: 'enum', enum: UserProvider, default: UserProvider.email})
   provider: string;
 
-  @Column({nullable: true, default: null})
+  @Column({default: null})
   role: string | null;
+
+  @Column({default: false})
+  isDeleted: boolean;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
