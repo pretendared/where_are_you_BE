@@ -31,6 +31,12 @@ export class AuthController {
 
     return await this.authService.generateAccsessToken(refreshToken);
   }
+
+  @Delete('/delete')
+  async deleteUser(@Req() req, @Query('id') userId) {
+    return this.authService.deleteUser(req.user, userId);
+  }
+
   @UseGuards(JwtGuard)
   @Get('/')
   async getUserProfile(@Req() req, ){

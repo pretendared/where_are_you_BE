@@ -1,4 +1,4 @@
-import { BadRequestException, HttpException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, HttpException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User, UserProvider } from './entities/auth.entity';
@@ -100,6 +100,19 @@ export class AuthService {
     await this.redis.set(`refreshToken:${payload.sub}`, newRefresh, 'EX', 7 * 24 * 60 * 60);
 
     return { accsessToken: newAccsess, refreshToken: newRefresh };
+  }
+
+  async deleteUser(reqester, targetId) {
+    if(reqester.role != "ADMIN" && reqester.id != targetId) { throw new ForbiddenException("해당 유저를 삭제할 권한이 없습니다."); }
+    
+    const user = await this.userRepository.findOne({where: {id: targetId}});
+    user.isDeleted = true;
+    await this.userRepository.save(user);
+
+    return {
+      statusCode: 204,
+      message: "성공적으로 탈퇴하였습니다"
+    }
   }
 
   async getUserProfile(userId) {
