@@ -30,4 +30,9 @@ export class AuthController {
 
     return await this.authService.generateAccsessToken(refreshToken);
   }
+  @UseGuards(JwtGuard)
+  @Get('/')
+  async getUserProfile(@Req() req, ){
+    return this.authService.getUserProfile(req.user.id);
+  }
 }

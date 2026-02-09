@@ -97,4 +97,8 @@ export class AuthService {
 
     return { accsessToken: newAccsess, refreshToken: newRefresh };
   }
+
+  async getUserProfile(userId) {
+    return await this.userRepository.find({where: {id: userId}});
+  }
 }
