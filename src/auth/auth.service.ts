@@ -19,7 +19,8 @@ export class AuthService {
 
   async Login(userDto: {userId: string, email: string, name: {familyName: string, givenName: string}, provider: UserProvider}) {
     let user = await this.userRepository.findOne({ where: { id: userDto.userId } });
-    if (!user) {
+    
+    if (!user || user.isDeleted) {
       const longName = userDto.name.familyName + userDto.name.givenName;
       user = this.userRepository.create({
         id: userDto.userId,
