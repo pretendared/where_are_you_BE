@@ -1,7 +1,8 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards, Req, UnauthorizedException, UseInterceptors } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthGuard } from '@nestjs/passport';
-import { userUpdateDto } from './dto/user-update.dto';
+import { userUpdateDto } from './dto/update.dto';
+import { JwtGuard } from './gurad/jwt.guard';
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -16,10 +17,10 @@ export class AuthController {
     return await this.authService.Login(req.user);
   }
 
-  @Patch('update')
+  @Patch('update/:id')
   @UseGuards(AuthGuard('jwt'))
-  async updateUser(@Req() req, @Body('nickname') updateDto: userUpdateDto) {
-    return await this.authService.update(req.user.userId, updateDto);
+  async updateUser(@Req() req, @Param('id') targetId, @Body() updateDto: userUpdateDto) {
+    return await this.authService.update(req.user, targetId, updateDto);
   }
 
   @Post('token/refresh')

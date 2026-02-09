@@ -6,7 +6,7 @@ import { JwtService } from '@nestjs/jwt';
 import { config } from 'dotenv';
 import { InjectRedis } from '@nestjs-modules/ioredis';
 import Redis from 'ioredis';
-import { userUpdateDto } from './dto/user-update.dto';
+import { userUpdateDto } from './dto/update.dto';
 config();
 
 @Injectable()
@@ -48,14 +48,17 @@ export class AuthService {
     };
   }
 
-  async update(userId: string, updateDto: userUpdateDto){
-    const user = await this.userRepository.findOne({ where: { id: userId } });
+  async update(reqester, targetId: string, updateDto: userUpdateDto){
+    if(reqester.role != "ADMIN" && reqester.id != targetId) {throw new ForbiddenException("해당 유저를 수정할 권한이 없습니다")}
+
+    const user = await this.userRepository.findOne({ where: { id: targetId } });
+
 
     //닉네임 설정
     if(updateDto.nickname) {
       if(updateDto.nickname == '노무현') { throw new HttpException("노무현은 살아있노 예아", 523)}
       if(!user){ throw new NotFoundException('유저를 찾지 못했습니다'); }
-      if(!updateDto.nickname){ throw new BadRequestException('잘못된 이름값입니다'); }
+      if(!updateDto.nickname || updateDto.nickname.length > 30){ throw new BadRequestException('잘못된 이름값입니다'); }
       if(user.nickname == updateDto.nickname){ throw new BadRequestException('현재 사용중인 닉네임입니다.'); }
       if(await this.userRepository.findOne({where: {nickname: updateDto.nickname}})){ throw new BadRequestException('이미 사용중인 닉네임입니다'); }
 
