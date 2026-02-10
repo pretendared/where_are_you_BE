@@ -25,10 +25,6 @@ export class AuthController {
 
   @Post('token/refresh')
   async generateAccsessToken(@Body('refreshToken') refreshToken: string) {
-    if(!refreshToken){
-      throw new UnauthorizedException('리프레시 토큰이 없습니다');
-    }
-
     return await this.authService.generateAccsessToken(refreshToken);
   }
 
