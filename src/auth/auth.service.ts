@@ -80,12 +80,14 @@ export class AuthService {
   }
 
   async generateAccsessToken(refreshToken: string){
+    if(!refreshToken) { throw new BadRequestException("refreshToken이 없습니다")}
     let payload;
     try {
       payload = this.jwtService.verify(refreshToken, { secret: process.env.JWT_REFRESH_SECRET });
     } catch (e) {
       throw new NotFoundException('만료된 refresh 토큰입니다');
     }
+    console.log(payload)
 
     const token = await this.redis.get(`refreshToken:${payload.sub}`);
     
@@ -95,7 +97,7 @@ export class AuthService {
     }
 
     const newAccsess = this.jwtService.sign({ sub: payload.sub, role: payload.role }, { secret: process.env.JWT_ACCSESS_SECRET, expiresIn: '30m' });
-    const newRefresh = this.jwtService.sign({ sub: payload.id }, { secret: process.env.JWT_REFRESH_SECRET, expiresIn: '7d' });
+    const newRefresh = this.jwtService.sign({ sub: payload.sub }, { secret: process.env.JWT_REFRESH_SECRET, expiresIn: '7d' });
     
     await this.redis.set(`refreshToken:${payload.sub}`, newRefresh, 'EX', 7 * 24 * 60 * 60);
 
