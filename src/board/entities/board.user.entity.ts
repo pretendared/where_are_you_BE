@@ -3,7 +3,6 @@ import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm";
 import { Board } from "./board.entity";
 import { User } from "src/auth/entities/auth.entity";
 export enum boardRole {
-  ADMIN = "ADMIN",
   MASTER = "MASTER",
   MEMBER = "MEMBER"
 }
