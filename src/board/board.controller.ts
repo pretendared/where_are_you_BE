@@ -16,10 +16,10 @@ export class BoardController {
   }
 
   @UseGuards(JwtGuard)
-  @Post('update/:boardCode')
+  @Patch('update/:boardCode')
   async updateBoard(@Req() req, @Param("boardCode") boardCode, @Body() updateBoardDto: UpdateBoardDto){
     // console.log(`${req.user.id}님이 ${boardCode} 보드를 수정하였습니다`)
-    return this.boardService.updateBoard(req.user.role, boardCode, updateBoardDto)
+    return this.boardService.updateBoard(req.user, boardCode, updateBoardDto)
   }
 
   @UseGuards(JwtGuard)
