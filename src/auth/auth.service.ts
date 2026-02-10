@@ -104,7 +104,7 @@ export class AuthService {
 
   async deleteUser(reqester, targetId) {
     if(reqester.role != "ADMIN" && reqester.id != targetId) { throw new ForbiddenException("해당 유저를 삭제할 권한이 없습니다."); }
-    
+
     const user = await this.userRepository.findOne({where: {id: targetId}});
     user.isDeleted = true;
     await this.userRepository.save(user);
@@ -116,6 +116,12 @@ export class AuthService {
   }
 
   async getUserProfile(userId) {
-    return await this.userRepository.find({where: {id: userId}});
+    const user = await this.userRepository.findOne({where: {id: userId}, relations: ['boardUser', 'boardUser.board']});
+    return {
+      userId: user.id,
+      nickname: user.nickname,
+      profileImage: user.profileImage,
+      boards: user.boardUser.map(bu => {return {boardCode: bu.boardCode, boardTitle: bu.board.title, role: bu.role}})
+    };
   }
 }
