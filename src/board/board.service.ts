@@ -77,28 +77,35 @@ export class BoardService {
 
   async deleteBoard(user, boardCode) {
     const isAdmin = user?.role === "ADMIN";
+    const userId = user?.id;
 
-    const board = await this.boardRepository.findOne({ where: { boardCode } });
-    if (!board) {
-      throw new NotFoundException("보드를 찾지 못했습니다");
-    }
+    return this.boardRepository.manager.transaction(async (manager) => {
+      const boardRepo = manager.getRepository(Board);
+      const boardUserRepo = manager.getRepository(BoardUserEntity);
 
-    if (isAdmin) {
-      await this.boardRepository.delete({ boardCode });
-      return;
-    }
+      const board = await boardRepo.findOne({ where: { boardCode } });
+      if (!board) {
+        throw new NotFoundException("해당 보드를 찾을 수 없습니다");
+      }
 
-    const boardUser = await this.boardUserRepository.findOne({ where: { boardCode, userId: user.id } });
-    if (!boardUser) {
-      throw new ForbiddenException("해당 보드에 속해있지 않습니다");
-    }
+      if (isAdmin) {
+        await boardRepo.delete({ boardCode });
+        return;
+      }
 
-    if (boardUser.role === boardRole.MASTER) {
-      await this.boardRepository.delete({ boardCode });
-      return;
-    }
+      const boardUser = await boardUserRepo.findOne({ where: { boardCode, userId } });
+      if (!boardUser) {
+        throw new ForbiddenException("해당 보드에 속해있지 않습니다");
+      }
 
-    await this.boardUserRepository.delete({ boardCode, userId: user.id });
+      if (boardUser.role === boardRole.MASTER) {
+        await boardRepo.delete({ boardCode });
+        return;
+      }
+
+      await boardUserRepo.delete({ boardCode, userId });
+    });
   }
+
 
 }
