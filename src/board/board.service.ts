@@ -3,7 +3,7 @@ import { CreateBoardDto } from './dto/create-board.dto';
 import { UpdateBoardDto } from './dto/update-board.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Board } from './entities/board.entity';
-import { In, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { boardRole, BoardUserEntity } from './entities/board.user.entity';
 
 @Injectable()
@@ -41,42 +41,71 @@ export class BoardService {
 
     return board;
   }
+  async getBoards(userId: number) {
+    const boardUsers = await this.boardUserRepository.find({
+      where: { userId },
+      relations: { board: true },
+      select: {
+        userId: true,
+        boardCode: true,
+        board: {
+          boardCode: true,
+          title: true,
+          boardColor: true,
+        },
+      },
+    });
 
-  async getBoards(userId: number){  
-    const boardCodes = (await this.boardUserRepository.find({where: {userId}, select: ["boardCode"]})).map(bc => bc.boardCode);
-    const boards = await this.boardRepository.find({where: {boardCode: In(boardCodes)}})
-    console.log(boards)
-    return boards
+    return boardUsers.map(({ board }) => ({
+      boardCode: board.boardCode,
+      title: board.title,
+      boardColor: board.boardColor,
+    }));
   }
 
-  async updateBoard(userRole, BoardCode, UpdateDto: UpdateBoardDto) {
+  async updateBoard(user, boardCode, updateDto: UpdateBoardDto) {
+    let board = await this.boardRepository.findOne({where: {boardCode}});
+    const boardUser = await this.boardUserRepository.find({where: {boardCode, userId: user.id}});
+    // if(!board) { throw new NotFoundException("해당 보드를 찾을 수 없습니다"); }
+    
+    console.log(board, boardUser);
+    // board.boardColor = updateDto.boardColor;
+    // board.title = updateDto.title;
 
+    // await 
   }
 
   async deleteBoard(user, boardCode) {
     const isAdmin = user?.role === "ADMIN";
+    const userId = user?.id;
 
-    const board = await this.boardRepository.findOne({ where: { boardCode } });
-    if (!board) {
-      throw new NotFoundException("보드를 찾지 못했습니다");
-    }
+    return this.boardRepository.manager.transaction(async (manager) => {
+      const boardRepo = manager.getRepository(Board);
+      const boardUserRepo = manager.getRepository(BoardUserEntity);
 
-    if (isAdmin) {
-      await this.boardRepository.delete({ boardCode });
-      return;
-    }
+      const board = await boardRepo.findOne({ where: { boardCode } });
+      if (!board) {
+        throw new NotFoundException("해당 보드를 찾을 수 없습니다");
+      }
 
-    const boardUser = await this.boardUserRepository.findOne({ where: { boardCode, userId: user.id } });
-    if (!boardUser) {
-      throw new ForbiddenException("해당 보드에 속해있지 않습니다");
-    }
+      if (isAdmin) {
+        await boardRepo.delete({ boardCode });
+        return;
+      }
 
-    if (boardUser.role === boardRole.MASTER) {
-      await this.boardRepository.delete({ boardCode });
-      return;
-    }
+      const boardUser = await boardUserRepo.findOne({ where: { boardCode, userId } });
+      if (!boardUser) {
+        throw new ForbiddenException("해당 보드에 속해있지 않습니다");
+      }
 
-    await this.boardUserRepository.delete({ boardCode, userId: user.id });
+      if (boardUser.role === boardRole.MASTER) {
+        await boardRepo.delete({ boardCode });
+        return;
+      }
+
+      await boardUserRepo.delete({ boardCode, userId });
+    });
   }
+
 
 }
