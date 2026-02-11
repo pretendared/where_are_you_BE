@@ -6,27 +6,27 @@ import { JwtGuard } from 'src/auth/gurad/jwt.guard';
 
 @Controller(':boardCode/post')
 export class PostsController {
-  constructor(private readonly postsService: PostsService) {}
+  constructor(private readonly postService: PostsService) {}
 
   @Post("/create")
   @UseGuards(JwtGuard)
   @HttpCode(HttpStatus.CREATED)
   create(@Req() req, @Param('boardCode') boardCode, @Body() createPostDto: CreatePostDto) {
-    return this.postsService.create(req.user, boardCode, createPostDto);
+    return this.postService.create(req.user, boardCode, createPostDto);
   }
 
   @Get("/list")
   @UseGuards(JwtGuard)
   @HttpCode(HttpStatus.OK)
   findAll(@Req() req, @Param("boardCode") boardCode) {
-    return this.postsService.findAll(req.user, boardCode);
+    return this.postService.findAll(req.user, boardCode);
   }
 
   @Get('/:postId')
   @UseGuards(JwtGuard)
   @HttpCode(HttpStatus.OK)
   findOne(@Req() req, @Param('postId') id: string) {
-    return this.postsService.findOne(req.user, +id);
+    return this.postService.findOne(req.user, +id);
   }
 
   @Patch('/update/:postId')
@@ -39,7 +39,7 @@ export class PostsController {
   @Delete('/delete/:postId')
   @UseGuards(JwtGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('postId') id: string) {
-    return this.postsService.remove(+id);
+  remove(@Req() req, @Param('postId') id: string) {
+    return this.postService.remove(+id);
   }
 }
