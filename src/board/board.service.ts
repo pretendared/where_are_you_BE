@@ -41,7 +41,7 @@ export class BoardService {
 
     return board;
   }
-  async getBoards(userId: number) {
+  async getBoards(userId: string) {
     const boardUsers = await this.boardUserRepository.find({
       where: { userId },
       relations: { board: true },
