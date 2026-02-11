@@ -10,7 +10,7 @@ export enum boardRole {
 @Entity()
 export class BoardUserEntity {
   @PrimaryColumn()
-  userId: number;
+  userId: string;
 
   @PrimaryColumn()
   boardCode: string;
