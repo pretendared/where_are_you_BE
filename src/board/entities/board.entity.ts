@@ -11,10 +11,7 @@ export class Board {
 
   @Column({default: "gray"})
   boardColor: string;
-
-  @Column({default: false})
-  isDeleted: boolean
-
+  
   @OneToMany(() => BoardUserEntity, (boardUser) => boardUser.board)
   boardUser: BoardUserEntity[];
 }
