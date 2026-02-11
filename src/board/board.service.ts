@@ -66,18 +66,17 @@ export class BoardService {
   async updateBoard(user, boardCode, updateDto: UpdateBoardDto) {
     let board = await this.boardRepository.findOne({where: {boardCode}});
     const boardUser = await this.boardUserRepository.find({where: {boardCode, userId: user.id}});
-    // if(!board) { throw new NotFoundException("해당 보드를 찾을 수 없습니다"); }
-    
-    console.log(board, boardUser);
-    // board.boardColor = updateDto.boardColor;
-    // board.title = updateDto.title;
+    if(!board) {throw new NotFoundException("해당 보드를 찾을 수 없습니다")}
+    if(!boardUser) {throw new ForbiddenException("해당 보드에 속해있지 않습니다")}
 
-    // await 
+    if(updateDto.title) {board.title = updateDto.title}
+    if(updateDto.boardColor) {board.boardColor = updateDto.boardColor}
+
+    return this.boardRepository.save(board);
   }
 
   async deleteBoard(user, boardCode) {
-    const isAdmin = user?.role === "ADMIN";
-    const userId = user?.id;
+    const userId = user.id;
 
     return this.boardRepository.manager.transaction(async (manager) => {
       const boardRepo = manager.getRepository(Board);
@@ -88,7 +87,7 @@ export class BoardService {
         throw new NotFoundException("해당 보드를 찾을 수 없습니다");
       }
 
-      if (isAdmin) {
+      if (user.role == "ADMIN") {
         await boardRepo.delete({ boardCode });
         return;
       }
