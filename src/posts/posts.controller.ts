@@ -22,24 +22,24 @@ export class PostsController {
     return this.postsService.findAll(req.user, boardCode);
   }
 
-  @Get('/:id')
+  @Get('/:postId')
   @UseGuards(JwtGuard)
   @HttpCode(HttpStatus.OK)
-  findOne(@Param('id') id: string) {
-    return this.postsService.findOne(+id);
+  findOne(@Req() req, @Param('postId') id: string) {
+    return this.postsService.findOne(req.user, +id);
   }
 
-  @Patch('/update/:id')
+  @Patch('/update/:postId')
   @UseGuards(JwtGuard)
   @HttpCode(HttpStatus.OK)
-  update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
+  update(@Param('PostId') id: string, @Body() updatePostDto: UpdatePostDto) {
     return this.postsService.update(+id, updatePostDto);
   }
 
-  @Delete('/delete/:id')
+  @Delete('/delete/:postId')
   @UseGuards(JwtGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id') id: string) {
+  remove(@Param('postId') id: string) {
     return this.postsService.remove(+id);
   }
 }
