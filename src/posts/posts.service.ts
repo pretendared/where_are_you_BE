@@ -69,8 +69,26 @@ export class PostsService {
     }));
   }
 
-  async findOne(id: number) {
-    return `This action returns a #${id} post`;
+  async findOne(user: any, postId: number) {
+    const post = await this.postRepository.findOne({
+      where: { id: postId },
+      relations: { author: true },
+    });
+    if (!post) {throw new NotFoundException('해당 게시물을 찾을 수 없습니다');}
+
+    const boardUser = await this.boardUserRepository.findOne({where: {boardCode: post.boardCode, userId: user.id}})
+    if(user.role != "ADMIN" && !boardUser) {throw new ForbiddenException("해당 보드에 속해있지 않습니다")}
+
+    return {
+      postId: post.id,
+      title: post.title,
+      content: post.content,
+      createdAt: post.createdAt,
+      author: {
+        nickname: post.author.nickname,
+        profileImage: post.author.profileImage,
+      },
+    };
   }
 
   async update(id: number, updatePostDto: UpdatePostDto) {
