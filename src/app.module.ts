@@ -7,6 +7,7 @@ import { RedisModule } from '@nestjs-modules/ioredis';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthModule } from './auth/auth.module';
 import { BoardModule } from './board/board.module';
+import { PostsModule } from './posts/posts.module';
 
 @Module({
   imports: [
@@ -26,7 +27,8 @@ import { BoardModule } from './board/board.module';
       url: "localhost:6379",
     }),
     AuthModule,
-    BoardModule
+    BoardModule,
+    PostsModule
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,5 +1,6 @@
 import { BoardUserEntity } from "src/board/entities/board.user.entity";
-import { Column, Entity, OneToMany, PrimaryColumn } from "typeorm";
+import { Post } from "src/posts/entities/post.entity";
+import { Column, Entity, ManyToOne, OneToMany, PrimaryColumn } from "typeorm";
 
 export enum UserProvider{
   google = 'google',
@@ -40,4 +41,7 @@ export class User {
 
   @OneToMany(() => BoardUserEntity, (boardUser) => boardUser.user)
   boardUser: BoardUserEntity[];
+
+  @ManyToOne(() => Post, post => post.author)
+  post: Post[];
 }
