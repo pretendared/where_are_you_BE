@@ -32,8 +32,8 @@ export class PostsController {
   @Patch('/update/:postId')
   @UseGuards(JwtGuard)
   @HttpCode(HttpStatus.OK)
-  update(@Param('PostId') id: string, @Body() updatePostDto: UpdatePostDto) {
-    return this.postsService.update(+id, updatePostDto);
+  update(@Req() req, @Param('PostId') id: string, @Body() updatePostDto: UpdatePostDto) {
+    return this.postService.update(req.uesr, +id, updatePostDto);
   }
 
   @Delete('/delete/:postId')

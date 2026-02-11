@@ -87,8 +87,13 @@ export class PostsService {
     };
   }
 
-  async update(id: number, updatePostDto: UpdatePostDto) {
-    return `This action updates a #${id} post`;
+  async update(user: {id: string, role: string}, id: number, updatePostDto: UpdatePostDto) {
+    let post = await this.postRepository.findOne({where: {id}});
+
+    if(!post) {throw new NotFoundException("해당 게시물을 찾을 수 없습니다")}
+    if(user.role != "ADMIN" && user.id != post.authorId) { throw new ForbiddenException("해당 게시물을 수정할 권한이 없습니다")}
+
+    return this.postRepository.merge(post, updatePostDto);
   }
 
   async remove(id: number) {
