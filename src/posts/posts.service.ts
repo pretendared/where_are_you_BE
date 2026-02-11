@@ -65,7 +65,7 @@ export class PostsService {
     }));
   }
 
-  async findOne(user: any, postId: number) {
+  async findOne(user: {id: string, role: string}, postId: number) {
     const post = await this.postRepository.findOne({
       where: { id: postId },
       relations: { author: true },
