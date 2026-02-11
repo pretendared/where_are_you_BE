@@ -87,7 +87,6 @@ export class AuthService {
     } catch (e) {
       throw new NotFoundException('만료된 refresh 토큰입니다');
     }
-    console.log(payload)
 
     const token = await this.redis.get(`refreshToken:${payload.sub}`);
     
