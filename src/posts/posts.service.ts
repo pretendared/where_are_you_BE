@@ -20,10 +20,6 @@ export class PostsService {
   ){}
 
   async create(user: any, boardCode: string, createPostDto: CreatePostDto) {
-    console.log(user)
-    console.log(boardCode)
-    console.log(createPostDto)
-
     if (!createPostDto || !createPostDto.title) {throw new BadRequestException('제목이 비어있습니다.');}
     if (!createPostDto.content) {throw new BadRequestException('내용이 비어있습니다.');}
     if (createPostDto.title.length < 50 || createPostDto.content.length > 500) {throw new BadRequestException('제목은 50자 이상 500자 미만입니다.');}
