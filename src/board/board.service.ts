@@ -81,7 +81,7 @@ export class BoardService {
     const boardUser = await this.boardUserRepository.findOne({where: {boardCode, userId: user.id}});
     if(!board) {throw new NotFoundException("해당 보드를 찾을 수 없습니다")}
     if(!boardUser) {throw new ForbiddenException("해당 보드에 속해있지 않습니다")}
-    if(user.role != "ADMIN" && boardUser.role != boardRole.MASTER) {throw new ForbiddenException("해당 보드를 수정할 권리가 없습니다")}
+    if(user.role != "ADMIN" && boardUser.role != boardRole.MASTER) {throw new ForbiddenException("해당 보드를 수정할 권한이 없습니다")}
 
     if(updateDto.title) {board.title = updateDto.title}
     if(updateDto.boardColor) {board.boardColor = updateDto.boardColor}
