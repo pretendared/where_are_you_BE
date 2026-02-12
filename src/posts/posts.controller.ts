@@ -40,6 +40,6 @@ export class PostsController {
   @UseGuards(JwtGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Req() req, @Param('postId') id: string) {
-    return this.postService.remove(+id);
+    return this.postService.remove(req.uesr, +id);
   }
 }

@@ -97,11 +97,11 @@ export class PostsService {
     return this.postRepository.merge(post, updatePostDto);
   }
 
-  async remove(id: number) {
-    return `This action removes a #${id} post`;
-  }
-
-  async boardCheck(boardCode: string, user) {
+  async remove(user: {id: string, role: string}, id: number) {
+    const post = await this.postRepository.findOne({where: {id}});
+    if(!post) {throw new NotFoundException("해당 게시물을 찾을 수 없습니다")}
+    if(user.role != "ADMIN", post.authorId != user.id) { throw new ForbiddenException("해당 게시물을 삭제할 권한이 없습니다");}
     
+    await this.postRepository.delete({id});
   }
 }
