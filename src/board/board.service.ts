@@ -4,7 +4,7 @@ import { UpdateBoardDto } from './dto/update-board.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Board } from './entities/board.entity';
 import { Repository } from 'typeorm';
-import { boardRole, BoardUserEntity } from './entities/board.user.entity';
+import { boardRole, BoardUser } from './entities/board.user.entity';
 
 @Injectable()
 export class BoardService {
@@ -12,8 +12,8 @@ export class BoardService {
     @InjectRepository(Board)
     private readonly boardRepository: Repository<Board>,
 
-    @InjectRepository(BoardUserEntity)
-    private readonly boardUserRepository: Repository<BoardUserEntity>
+    @InjectRepository(BoardUser)
+    private readonly boardUserRepository: Repository<BoardUser>
   ){}
 
   async createBoard(userId, createDto: CreateBoardDto){
@@ -94,7 +94,7 @@ export class BoardService {
 
     return this.boardRepository.manager.transaction(async (manager) => {
       const boardRepo = manager.getRepository(Board);
-      const boardUserRepo = manager.getRepository(BoardUserEntity);
+      const boardUserRepo = manager.getRepository(BoardUser);
 
       const board = await boardRepo.findOne({ where: { boardCode } });
       if (!board) {
