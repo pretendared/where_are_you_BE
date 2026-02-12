@@ -1,4 +1,4 @@
-import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { UpdateBoardDto } from './dto/update-board.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -113,10 +113,15 @@ export class BoardService {
 
       if (user.role == "ADMIN" || boardUser.role === boardRole.MASTER) {
         await boardRepo.delete({ boardCode });
-        return;
+        return {
+          message: "성공적으로 보드를 제거했습니다"
+        };
       }
 
       await boardUserRepo.delete({ boardCode, userId });
+      return {
+        message: "성공적으로 보드를 탈퇴하였습니다"
+      }
     });
   }
 
