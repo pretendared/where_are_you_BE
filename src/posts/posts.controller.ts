@@ -32,7 +32,7 @@ export class PostsController {
   @Patch('/update/:postId')
   @UseGuards(JwtGuard)
   @HttpCode(HttpStatus.OK)
-  update(@Req() req, @Param('PostId') id: string, @Body() updatePostDto: UpdatePostDto) {
+  update(@Req() req, @Param('postId') id: string, @Body() updatePostDto: UpdatePostDto) {
     return this.postService.update(req.uesr, +id, updatePostDto);
   }
 
