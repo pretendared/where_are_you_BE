@@ -57,22 +57,30 @@ export class BoardService {
   async getBoards(userId: string) {
     const boardUsers = await this.boardUserRepository.find({
       where: { userId },
-      relations: { board: true },
+      relations: { board: true,  user: true},
       select: {
-        userId: true,
-        boardCode: true,
         board: {
           boardCode: true,
           title: true,
           boardColor: true,
         },
+        user: {
+          id: true,
+          nickname: true,
+          profileImage: true
+        }
       },
     });
 
-    return boardUsers.map(({ board }) => ({
+    return boardUsers.map(({ board, user }) => ({
       boardCode: board.boardCode,
       title: board.title,
       boardColor: board.boardColor,
+      author: {
+        id: user.id,
+        nickname: user.nickname,
+        profileImage: user.profileImage
+      }
     }));
   }
 
