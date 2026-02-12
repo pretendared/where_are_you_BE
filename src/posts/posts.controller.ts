@@ -33,13 +33,13 @@ export class PostsController {
   @UseGuards(JwtGuard)
   @HttpCode(HttpStatus.OK)
   update(@Req() req, @Param('postId') id: string, @Body() updatePostDto: UpdatePostDto) {
-    return this.postService.update(req.uesr, +id, updatePostDto);
+    return this.postService.update(req.user, +id, updatePostDto);
   }
 
   @Delete('/delete/:postId')
   @UseGuards(JwtGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Req() req, @Param('postId') id: string) {
-    return this.postService.remove(req.uesr, +id);
+    return this.postService.remove(req.user, +id);
   }
 }
