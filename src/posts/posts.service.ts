@@ -20,10 +20,10 @@ export class PostsService {
   ){}
 
   async create(user: any, boardCode: string, createPostDto: CreatePostDto) {
-    if (!createPostDto || !createPostDto.title) {throw new BadRequestException('제목이 비어있습니다.');}
-    if (!createPostDto.content) {throw new BadRequestException('내용이 비어있습니다.');}
-    if (!createPostDto.title.trim() || createPostDto.content.length > 50) {throw new BadRequestException('제목은 1자 이상 50자 미만입니다.');}
-    if (!createPostDto.content.trim() || createPostDto.content.length > 500) {throw new BadRequestException("본문은 1자 이상 500자 미만입니다.")}
+    if (!createPostDto.title || !createPostDto.title.trim()) {throw new BadRequestException('제목이 비어있습니다.');}
+    if (!createPostDto.content || !createPostDto.content.trim() ) {throw new BadRequestException('내용이 비어있습니다.');}
+    if (createPostDto.content.length > 50) {throw new BadRequestException('제목은 1자 이상 50자 미만입니다.');}
+    if (createPostDto.content.length > 500) {throw new BadRequestException("본문은 1자 이상 500자 미만입니다.")}
 
     const board = await this.boardRepository.findOne({ where: { boardCode } });
     if (!board) {throw new NotFoundException('해당 보드를 찾을 수 없습니다.');}
