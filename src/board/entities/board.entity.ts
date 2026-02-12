@@ -11,7 +11,7 @@ export class Board {
   @Column()
   title: string;
 
-  @Column({default: "gray"})
+  @Column({default: "#B9BBC6"})
   boardColor: string;
   
   @OneToMany(() => BoardUserEntity, (boardUser) => boardUser.board)
