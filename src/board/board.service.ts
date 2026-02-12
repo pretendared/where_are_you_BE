@@ -41,6 +41,19 @@ export class BoardService {
 
     return board;
   }
+
+  async joinBoard(userId: string, boardCode: string){
+    const board = await this.boardRepository.findOne({where: {boardCode}})
+    if(!board) {throw new NotFoundException("해당 보드를 찾을 수 없습니다")}
+
+    const boardUser = await this.boardUserRepository.findOne({where: {userId, boardCode}});
+    if(boardUser) {throw new ConflictException("이미 가입한 보드입니다")}
+    
+    this.boardUserRepository.save({userId, boardCode, role: boardRole.MEMBER})
+    
+    return {message: "가입 성공"}
+  }
+
   async getBoards(userId: string) {
     const boardUsers = await this.boardUserRepository.find({
       where: { userId },
