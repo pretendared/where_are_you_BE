@@ -1,4 +1,4 @@
-import { BoardUserEntity } from "src/board/entities/board.user.entity";
+import { BoardUser } from "src/board/entities/board.user.entity";
 import { Post } from "src/posts/entities/post.entity";
 import { Column, Entity, ManyToOne, OneToMany, PrimaryColumn } from "typeorm";
 
@@ -39,8 +39,8 @@ export class User {
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
 
-  @OneToMany(() => BoardUserEntity, (boardUser) => boardUser.user)
-  boardUser: BoardUserEntity[];
+  @OneToMany(() => BoardUser, (boardUser) => boardUser.user)
+  boardUser: BoardUser[];
 
   @ManyToOne(() => Post, post => post.author)
   post: Post[];

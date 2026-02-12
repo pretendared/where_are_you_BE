@@ -5,7 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Post } from './entities/post.entity';
 import { Repository } from 'typeorm';
 import { Board } from 'src/board/entities/board.entity';
-import { BoardUserEntity } from 'src/board/entities/board.user.entity';
+import { BoardUser } from 'src/board/entities/board.user.entity';
 import { User } from 'src/auth/entities/auth.entity';
 
 @Injectable()
@@ -15,8 +15,8 @@ export class PostsService {
     private postRepository: Repository<Post>,
     @InjectRepository(Board)
     private boardRepository: Repository<Board>,
-    @InjectRepository(BoardUserEntity)
-    private boardUserRepository: Repository<BoardUserEntity>
+    @InjectRepository(BoardUser)
+    private boardUserRepository: Repository<BoardUser>
   ){}
 
   async create(user: any, boardCode: string, createPostDto: CreatePostDto) {

@@ -16,6 +16,12 @@ export class BoardController {
   }
 
   @UseGuards(JwtGuard)
+  @Post('/join/:boardCode')
+  async joinBoard(@Req() req, @Param('boardCode') boardCode){
+    return this.boardService.joinBoard(req.user.id, boardCode)
+  }
+
+  @UseGuards(JwtGuard)
   @Patch('update/:boardCode')
   async updateBoard(@Req() req, @Param("boardCode") boardCode, @Body() updateBoardDto: UpdateBoardDto){
     // console.log(`${req.user.id}님이 ${boardCode} 보드를 수정하였습니다`)

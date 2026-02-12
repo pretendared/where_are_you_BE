@@ -8,6 +8,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { AuthModule } from './auth/auth.module';
 import { BoardModule } from './board/board.module';
 import { PostsModule } from './posts/posts.module';
+import { MemberModule } from './member/member.module';
 
 @Module({
   imports: [
@@ -28,7 +29,8 @@ import { PostsModule } from './posts/posts.module';
     }),
     AuthModule,
     BoardModule,
-    PostsModule
+    PostsModule,
+    MemberModule
   ],
   controllers: [AppController],
   providers: [AppService],

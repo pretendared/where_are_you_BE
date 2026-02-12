@@ -1,5 +1,5 @@
 import { Column, Entity, OneToMany, PrimaryColumn } from "typeorm";
-import { BoardUserEntity } from "./board.user.entity";
+import { BoardUser } from "./board.user.entity";
 import { Post } from "src/posts/entities/post.entity";
 
 
@@ -11,11 +11,11 @@ export class Board {
   @Column()
   title: string;
 
-  @Column({default: "gray"})
+  @Column({default: "#B9BBC6"})
   boardColor: string;
   
-  @OneToMany(() => BoardUserEntity, (boardUser) => boardUser.board)
-  boardUser: BoardUserEntity[];
+  @OneToMany(() => BoardUser, (boardUser) => boardUser.board)
+  boardUser: BoardUser[];
 
   @OneToMany(() => Post, post => post.board)
   post: Post[];

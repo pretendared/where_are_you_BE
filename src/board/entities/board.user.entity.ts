@@ -8,7 +8,7 @@ export enum boardRole {
 }
 
 @Entity()
-export class BoardUserEntity {
+export class BoardUser {
   @PrimaryColumn()
   userId: string;
 
