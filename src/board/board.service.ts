@@ -53,7 +53,27 @@ export class BoardService {
     
     return {message: "가입 성공"}
   }
-
+    async generateNewCode(user: {id: string, role: string}, boardCode: string){
+      const boardUser = await this.boardUserRepository.findOne({where: {userId: user.id, boardCode}})
+      if(user.role != "ADMIN" && boardUser.role != boardRole.MASTER) {throw new ForbiddenException("보드 코드를 재설정할 권한이 없습니다");}
+      const board = await this.boardRepository.findOne({where: {boardCode}});
+      const boardUsers = await this.boardUserRepository.find({where: {boardCode}})
+      
+      if(!board) {throw new NotFoundException("해당 보드를 찾을 수 없습니다")}
+  
+      let newCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+      while (await this.boardRepository.findOne({where: {boardCode: newCode}}) != null){
+        newCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+      }
+  
+      board.boardCode = newCode;
+      boardUsers.forEach(bu => {
+        bu.boardCode = newCode;
+      });
+  
+      return {newCode};
+    }
+  
   async getBoards(userId: string) {
     const boardUsers = await this.boardUserRepository.find({
       where: { userId },
