@@ -154,8 +154,5 @@ export class BoardService {
         message: "성공적으로 보드를 탈퇴하였습니다"
       }
     });
-    });
   }
-
-
 }
