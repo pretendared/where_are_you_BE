@@ -41,7 +41,7 @@ export class MemberService {
     const targetMember = board.boardUser.find(m => m.userId == targetId);
     const reqMember = board.boardUser.find(m => m.userId == reqUser.id);
     if(!targetMember || !reqMember) {throw new NotFoundException("해당 보드에 속해있지 않거나 멤버를 찾을 수 없습니다")}
-    if(reqMember.role != boardRole.MASTER && reqUser.role != "ADMIN") {throw new ForbiddenException('해당 멤버를 추방할 권한이 없습니다')}
+    if(reqMember.role != boardRole.MASTER && reqUser.role != "ADMIN" && board.authorId == targetId) {throw new ForbiddenException('해당 멤버를 추방할 권한이 없습니다')}
 
     await this.boardUserRepository.delete({userId: targetId})
     return this.getMembers(boardCode);
