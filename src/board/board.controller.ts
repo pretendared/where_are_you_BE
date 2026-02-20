@@ -20,6 +20,12 @@ export class BoardController {
   async joinBoard(@Req() req, @Param('boardCode') boardCode){
     return this.boardService.joinBoard(req.user.id, boardCode)
   }
+  
+  @UseGuards(JwtGuard)
+  @Post('/new-code/:boardCode')
+  async genereteNewCode(@Req() req, @Param("boardCode") boardCode){
+    return this.boardService.generateNewCode(req.user, boardCode)
+  }
 
   @UseGuards(JwtGuard)
   @Patch('update/:boardCode')

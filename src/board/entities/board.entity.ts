@@ -11,6 +11,9 @@ export class Board {
   @Column()
   title: string;
 
+  @Column()
+  authorId: string;
+
   @Column({default: "#B9BBC6"})
   boardColor: string;
   

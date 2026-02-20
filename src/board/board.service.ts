@@ -3,7 +3,7 @@ import { CreateBoardDto } from './dto/create-board.dto';
 import { UpdateBoardDto } from './dto/update-board.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Board } from './entities/board.entity';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { boardRole, BoardUser } from './entities/board.user.entity';
 
 @Injectable()
@@ -29,6 +29,7 @@ export class BoardService {
     const board = this.boardRepository.create({
       boardCode,
       title: createDto.title,
+      authorId: userId
     })
     await this.boardRepository.save(board);
 
@@ -53,35 +54,58 @@ export class BoardService {
     
     return {message: "가입 성공"}
   }
-
+    async generateNewCode(user: {id: string, role: string}, boardCode: string){
+      const boardUser = await this.boardUserRepository.findOne({where: {userId: user.id, boardCode}})
+      if(user.role != "ADMIN" && boardUser.role != boardRole.MASTER) {throw new ForbiddenException("보드 코드를 재설정할 권한이 없습니다");}
+      const board = await this.boardRepository.findOne({where: {boardCode}});
+      const boardUsers = await this.boardUserRepository.find({where: {boardCode}})
+      
+      if(!board) {throw new NotFoundException("해당 보드를 찾을 수 없습니다")}
+  
+      let newCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+      while (await this.boardRepository.findOne({where: {boardCode: newCode}}) != null){
+        newCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+      }
+  
+      board.boardCode = newCode;
+      boardUsers.forEach(bu => {
+        bu.boardCode = newCode;
+      });
+  
+      return {newCode};
+    }
+  
   async getBoards(userId: string) {
     const boardUsers = await this.boardUserRepository.find({
-      where: { userId },
-      relations: { board: true,  user: true},
-      select: {
-        board: {
-          boardCode: true,
-          title: true,
-          boardColor: true,
-        },
-        user: {
-          id: true,
-          nickname: true,
-          profileImage: true
-        }
-      },
+      where: {userId},
+      relations: { board: true },
     });
 
-    return boardUsers.map(({ board, user }) => ({
-      boardCode: board.boardCode,
-      title: board.title,
-      boardColor: board.boardColor,
-      author: {
-        id: user.id,
-        nickname: user.nickname,
-        profileImage: user.profileImage
-      }
-    }));
+    if (boardUsers.length === 0) {
+      return [];
+    }
+
+    const boardCodes = boardUsers.map(bu => bu.boardCode);
+    const masters = await this.boardUserRepository.find({
+      where: { boardCode: In(boardCodes), role: boardRole.MASTER },
+      relations: { user: true },
+    });
+
+    const masterByBoard = new Map(masters.map(master => [master.boardCode, master.user]));
+
+    return boardUsers.map(bu => {
+      const master = masterByBoard.get(bu.boardCode);
+      return {
+        boardCode: bu.board.boardCode,
+        title: bu.board.title,
+        boardColor: bu.board.boardColor,
+        author: {
+          id: master.id,
+          nickname: master.nickname,
+          profileImage: master.profileImage
+        }
+      };
+    });
   }
 
   async updateBoard(user, boardCode, updateDto: UpdateBoardDto) {
@@ -132,6 +156,4 @@ export class BoardService {
       }
     });
   }
-
-
 }
