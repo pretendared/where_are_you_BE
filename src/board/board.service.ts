@@ -29,6 +29,7 @@ export class BoardService {
     const board = this.boardRepository.create({
       boardCode,
       title: createDto.title,
+      authorId: userId
     })
     await this.boardRepository.save(board);
 
