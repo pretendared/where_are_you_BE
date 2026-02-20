@@ -94,10 +94,10 @@ export class AuthService {
       await this.redis.del(`refreshToken:${payload.sub}`);
       throw new UnauthorizedException('탈취된 refresh token');
     }
+    
+    const user = await this.userRepository.findOne({where: {id: payload.sub}})
 
-    const user = await this.userRepository.findOne({where: {id: payload.id}})
-
-    const newAccsess = this.jwtService.sign({ sub: user.id, role: user.role }, { secret: process.env.JWT_ACCSESS_SECRET, expiresIn: '30m' });
+    const newAccsess = this.jwtService.sign({ sub: user.id, role: user.role }, { secret: process.env.JWT_ACCSESS_SECRET, expiresIn: '30d' });
     const newRefresh = this.jwtService.sign({ sub: payload.sub }, { secret: process.env.JWT_REFRESH_SECRET, expiresIn: '7d' });
     
     await this.redis.set(`refreshToken:${payload.sub}`, newRefresh, 'EX', 7 * 24 * 60 * 60);
