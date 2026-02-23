@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Board } from './entities/board.entity';
 import { In, Repository } from 'typeorm';
 import { boardRole, BoardUser } from './entities/board.user.entity';
+import { User } from 'src/auth/entities/auth.entity';
 
 @Injectable()
 export class BoardService {
@@ -13,7 +14,10 @@ export class BoardService {
     private readonly boardRepository: Repository<Board>,
 
     @InjectRepository(BoardUser)
-    private readonly boardUserRepository: Repository<BoardUser>
+    private readonly boardUserRepository: Repository<BoardUser>,
+
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>
   ){}
 
   async createBoard(userId, createDto: CreateBoardDto){
@@ -85,29 +89,24 @@ export class BoardService {
       return [];
     }
 
-    const boardCodes = boardUsers.map(bu => bu.boardCode);
-    const masters = await this.boardUserRepository.find({
-      where: { boardCode: In(boardCodes), role: boardRole.MASTER },
-      relations: { user: true },
-    });
-
-    const masterByBoard = new Map(masters.map(master => [master.boardCode, master.user]));
+    const authorIds = boardUsers.map(bu => bu.board.authorId);
+    const authors = await this.userRepository.find({ where: { id: In(authorIds) } });
 
     return boardUsers.map(bu => {
-      const master = masterByBoard.get(bu.boardCode);
+      const author = authors.find(a => a.id == bu.board.authorId);
       return {
         boardCode: bu.board.boardCode,
         title: bu.board.title,
         boardColor: bu.board.boardColor,
+        authorId: bu.board.authorId,
         author: {
-          id: master.id,
-          nickname: master.nickname,
-          profileImage: master.profileImage
+          id: author.id,
+          nickname: author.nickname,
+          profileImage: author.profileImage
         }
-      };
+      }
     });
   }
-
   async updateBoard(user, boardCode, updateDto: UpdateBoardDto) {
     let board = await this.boardRepository.findOne({where: {boardCode}});
     const boardUser = await this.boardUserRepository.findOne({where: {boardCode, userId: user.id}});
