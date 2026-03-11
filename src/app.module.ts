@@ -9,6 +9,7 @@ import { AuthModule } from './auth/auth.module';
 import { BoardModule } from './board/board.module';
 import { PostsModule } from './posts/posts.module';
 import { MemberModule } from './member/member.module';
+import { ProjectModule } from './project/project.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { MemberModule } from './member/member.module';
     BoardModule,
     PostsModule,
     MemberModule,
+    ProjectModule,
   ],
   controllers: [AppController],
   providers: [AppService],
