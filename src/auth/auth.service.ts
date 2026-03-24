@@ -57,7 +57,7 @@ export class AuthService {
 
     //닉네임 설정
     if(updateDto.nickname) {
-      if(updateDto.nickname == '노무현') { throw new HttpException("노무현은 살아있노 예아", 523)}
+      if(updateDto.nickname == '노무현') { console.log("누군가 노무현을 시도했습니다"); throw new HttpException("노무현은 살아있노 예아", 523)}
       if(!user){ throw new NotFoundException('유저를 찾지 못했습니다'); }
       if(!updateDto.nickname || updateDto.nickname.length > 30){ throw new BadRequestException('잘못된 이름값입니다'); }
       if(user.nickname == updateDto.nickname){ throw new BadRequestException('현재 사용중인 닉네임입니다.'); }
@@ -120,6 +120,7 @@ export class AuthService {
 
   async getUserProfile(userId) {
     const user = await this.userRepository.findOne({where: {id: userId}, relations: ['boardUser', 'boardUser.board']});
+    console.log(user);
     return {
       userId: user.id,
       nickname: user.nickname,

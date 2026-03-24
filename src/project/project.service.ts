@@ -37,6 +37,7 @@ export class ProjectService {
       return {
         porjectId: porject.id,
         title: porject.title,
+        startedAt: porject.startedAt,
         endedAt: porject.endedAt,
         address: porject.address,
         titleImage: porject.titleImage,
@@ -45,17 +46,17 @@ export class ProjectService {
   }
 
   async update(req: {id: string, role: string}, boardCode: string, projectId: number, updateProjectDto: UpdateProjectDto) {
+    
     if(!updateProjectDto ) {throw new BadRequestException("잘못된 입력값입니다")}
     const boardUser = await this.boardUserRepository.findOne({ where: { boardCode: boardCode, userId: req.id } });
     if(!boardUser) {throw new ForbiddenException("해당 보드에 속해있지 않습니다.")}
-    if(req.role !== 'admin' && boardUser.role != boardRole.MASTER) {throw new ForbiddenException("프로젝트를 수정할 권한이 없습니다.")}
-    if(updateProjectDto.startedAt > updateProjectDto.endedAt) {throw new BadRequestException("프로젝트의 시작 날짜는 종료 날짜보다 늦을 수 없습니다.")}
 
-    const project = await this.projectRepository.preload({
-      id: projectId,
-      boardCode,
-      ...updateProjectDto,
-    });
+    let project = await this.projectRepository.findOne({ where: { id: projectId, boardCode } });
+    if(!project) {throw new BadRequestException("존재하지 않는 프로젝트입니다.")}
+    if(req.role !== 'admin' && boardUser.role != boardRole.MASTER) {throw new ForbiddenException("프로젝트를 수정할 권한이 없습니다.")}
+    if(new Date(updateProjectDto.startedAt) > new Date(updateProjectDto.endedAt)) {throw new BadRequestException("프로젝트의 시작 날짜는 종료 날짜보다 늦을 수 없습니다.")}
+
+    Object.assign(project, updateProjectDto);
 
     await this.projectRepository.save(project);
     return this.findAll(boardCode);
