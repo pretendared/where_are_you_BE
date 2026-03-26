@@ -10,6 +10,7 @@ import { BoardModule } from './board/board.module';
 import { PostsModule } from './posts/posts.module';
 import { MemberModule } from './member/member.module';
 import { ProjectModule } from './project/project.module';
+import { DayModule } from './day/day.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { ProjectModule } from './project/project.module';
     PostsModule,
     MemberModule,
     ProjectModule,
+    DayModule,
   ],
   controllers: [AppController],
   providers: [AppService],
