@@ -1,0 +1,40 @@
+{
+  "days": [
+    {
+      "dayIndex": 1,
+      "memo": "메모1",
+      "tasks": [
+        {
+          "id": 1,
+          "title": "미션1",
+          "content": "미션1 내용",
+          "time": {
+            "start": "12:00",
+            "end": "14:00"
+          },
+          "type": "NORMAL"
+        },
+        {
+          "id": 2,
+          "title": "미션2",
+          "content": "미션2 내용",
+          "description": "미션2 설명",
+          "time": {
+            "start": "15:00",
+            "end": "17:00"
+          },
+          "type": "MAP",
+          "geometry": {
+            "name": "부엉이바위",
+            "address": "경상남도 김해시 진영읍 본산리 산3-17",
+            "placeId": "ChIJN1t_tDeuEmsRUsoyG83frY4",
+            "location": {
+              "lat": 35.123456,
+              "lng": 128.123456
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
