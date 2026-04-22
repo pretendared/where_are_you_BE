@@ -7,14 +7,17 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { GoogleStrategy } from './strategy/google.strategy';
 import { JwtStrategy } from './strategy/jwt.strategy';
+import { RedisModule } from '@nestjs-modules/ioredis';
 
 @Module({
   imports: [
     PassportModule,
     TypeOrmModule.forFeature([User]),
     JwtModule.register({secret: process.env.JWT_ACCSESS_SECRET,}),
+    RedisModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, GoogleStrategy, JwtStrategy],
 })
 export class AuthModule {}
+
