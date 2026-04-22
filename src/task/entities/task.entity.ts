@@ -8,7 +8,7 @@ export enum TaskType {
 }
 
 @Entity()
-export class Task {
+export class Task {n
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -33,7 +33,6 @@ export class Task {
   @ManyToOne(() => Day, day => day.tasks, {onDelete: 'CASCADE'})
   day: Day;
 
-  @Column({ nullable: true })
   @OneToOne(() => TaskMap, TaskMap => TaskMap.task, {nullable: true, cascade: true})
   taskMap: TaskMap;
 }

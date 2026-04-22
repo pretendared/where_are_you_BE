@@ -91,7 +91,6 @@ export class TaskService {
       memo: day.memo,
       date: day.date,
       tasks: day.tasks.map((task) => {
-        console.log(task.taskMap)
         return {
           id: task.id,
           title: task.title,

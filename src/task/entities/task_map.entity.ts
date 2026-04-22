@@ -21,6 +21,7 @@ export class TaskMap {
   @Column()
   lng: number;
 
-  @OneToOne(() => Task, task => task.taskMap, {onDelete: 'CASCADE'})  
+  @OneToOne(() => Task, task => task.taskMap, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'taskId' })
   task: Task;
 }
