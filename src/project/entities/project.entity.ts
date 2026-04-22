@@ -1,5 +1,5 @@
 import { Board } from "src/board/entities/board.entity";
-import { Day } from "src/day/entites/day.entity";
+import { Day } from "src/day/entityes/day.entity";
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()

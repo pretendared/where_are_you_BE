@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Project } from './entities/project.entity';
 import { Repository } from 'typeorm';
 import { boardRole, BoardUser } from 'src/board/entities/board.user.entity';
+import { DayService } from 'src/day/day.service';
 
 @Injectable()
 export class ProjectService {
@@ -13,7 +14,9 @@ export class ProjectService {
     private readonly projectRepository: Repository<Project>,
 
     @InjectRepository(BoardUser)
-    private readonly boardUserRepository: Repository<BoardUser>
+    private readonly boardUserRepository: Repository<BoardUser>,
+
+    private dayService: DayService
   ) {}
 
 
@@ -27,7 +30,9 @@ export class ProjectService {
       ...createProjectDto,
       boardCode: boardCode
     })
+    
     await this.projectRepository.save(project);
+    await this.dayService.createDate(project.id, createProjectDto.startedAt, createProjectDto.endedAt);
     return this.findAll(boardCode);
   }
 
