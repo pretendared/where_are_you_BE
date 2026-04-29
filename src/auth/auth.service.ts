@@ -49,8 +49,23 @@ export class AuthService {
     };
   }
 
-  async update(reqester, targetId: string, updateDto: userUpdateDto){
-    if(reqester.role != "ADMIN" && reqester.id != targetId) {throw new ForbiddenException("해당 유저를 수정할 권한이 없습니다")}
+  async logout(refreshToken: string) {
+    if (!refreshToken) { throw new BadRequestException("refreshToken이 없습니다") }
+    let payload;
+    try {
+      payload = this.jwtService.verify(refreshToken, { secret: process.env.JWT_REFRESH_SECRET });
+    } catch (e) {
+      throw new NotFoundException('만료된 refresh 토큰입니다');
+    }
+    await this.redis.del(`refreshToken:${payload.sub}`);
+    return {
+      statusCode: 200,
+      message: "성공적으로 로그아웃되었습니다"
+    }
+  }
+
+  async update(reqester, targetId: string, updateDto: userUpdateDto) {
+    if (reqester.role != "ADMIN" && reqester.id != targetId) { throw new ForbiddenException("해당 유저를 수정할 권한이 없습니다") }
 
     const user = await this.userRepository.findOne({ where: { id: targetId } });
 

@@ -28,6 +28,12 @@ export class AuthController {
     return await this.authService.generateAccsessToken(refreshToken);
   }
 
+  @Post('logout')
+  @UseGuards(JwtGuard)
+  async logout(@Body('refreshToken') refreshToken: string) {
+    return await this.authService.logout(refreshToken);
+  }
+
   @Delete('/delete')
   @UseGuards(JwtGuard)
   async deleteUser(@Req() req, @Query('id') userId) {
