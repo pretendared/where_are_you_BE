@@ -18,7 +18,7 @@ export class AuthController {
   }
 
   @Patch('update/:id')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(JwtGuard)
   async updateUser(@Req() req, @Param('id') targetId, @Body() updateDto: userUpdateDto) {
     return await this.authService.update(req.user, targetId, updateDto);
   }
@@ -28,7 +28,14 @@ export class AuthController {
     return await this.authService.generateAccsessToken(refreshToken);
   }
 
+  @Post('logout')
+  @UseGuards(JwtGuard)
+  async logout(@Body('refreshToken') refreshToken: string) {
+    return await this.authService.logout(refreshToken);
+  }
+
   @Delete('/delete')
+  @UseGuards(JwtGuard)
   async deleteUser(@Req() req, @Query('id') userId) {
     return this.authService.deleteUser(req.user, userId);
   }
