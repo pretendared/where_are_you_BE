@@ -11,6 +11,7 @@ import { PostsModule } from './posts/posts.module';
 import { MemberModule } from './member/member.module';
 import { ProjectModule } from './project/project.module';
 import { DayModule } from './day/day.module';
+import { CommentModule } from './comment/comment.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { DayModule } from './day/day.module';
     MemberModule,
     ProjectModule,
     DayModule,
+    CommentModule,
   ],
   controllers: [AppController],
   providers: [AppService],
