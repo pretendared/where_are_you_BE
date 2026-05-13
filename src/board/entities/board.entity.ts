@@ -15,14 +15,14 @@ export class Board {
   @Column()
   authorId: string;
 
-  @Column({default: "#B9BBC6"})
+  @Column({ default: "#B9BBC6" })
   boardColor: string;
-  
+
   @OneToMany(() => BoardUser, (boardUser) => boardUser.board)
   boardUser: BoardUser[];
 
   @OneToMany(() => Post, post => post.board)
-  post: Post[];
+  posts: Post[];
 
   @OneToMany(() => Project, project => project.board)
   projects: Project[];

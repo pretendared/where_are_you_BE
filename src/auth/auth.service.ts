@@ -135,7 +135,7 @@ export class AuthService {
       userId: user.id,
       nickname: user.nickname,
       profileImage: user.profileImage,
-      boards: user.boardUser.map(bu => { return { boardCode: bu.boardCode, boardTitle: bu.board.title, role: bu.role } })
+      boards: user.boardUsers.map(bu => { return { boardCode: bu.boardCode, boardTitle: bu.board.title, role: bu.role } })
     };
   }
 }

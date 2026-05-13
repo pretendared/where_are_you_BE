@@ -12,6 +12,7 @@ import { MemberModule } from './member/member.module';
 import { ProjectModule } from './project/project.module';
 import { DayModule } from './day/day.module';
 import { CommentModule } from './comment/comment.module';
+import { MapModule } from './map/map.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { CommentModule } from './comment/comment.module';
     ProjectModule,
     DayModule,
     CommentModule,
+    MapModule,
   ],
   controllers: [AppController],
   providers: [AppService],

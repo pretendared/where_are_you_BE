@@ -15,14 +15,14 @@ export class BoardUser {
   @PrimaryColumn()
   boardCode: string;
 
-  @ManyToOne(() => User, user => user.boardUser, {onDelete: 'CASCADE'})
-  @JoinColumn({name: "userId"})
+  @ManyToOne(() => User, user => user.boardUsers, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: "userId" })
   user: User;
 
-  @ManyToOne(() => Board, board => board.boardUser, {onDelete: "CASCADE"})
-  @JoinColumn({name: "boardCode"})
+  @ManyToOne(() => Board, board => board.boardUser, { onDelete: "CASCADE" })
+  @JoinColumn({ name: "boardCode" })
   board: Board;
 
-  @Column({type: "enum", enum: boardRole, default: boardRole.MEMBER})
+  @Column({ type: "enum", enum: boardRole, default: boardRole.MEMBER })
   role: boardRole;
 }
