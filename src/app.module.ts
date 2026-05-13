@@ -6,6 +6,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { RedisModule } from '@nestjs-modules/ioredis';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthModule } from './auth/auth.module';
+import { BoardModule } from './board/board.module';
+import { PostsModule } from './posts/posts.module';
+import { MemberModule } from './member/member.module';
+import { ProjectModule } from './project/project.module';
+import { DayModule } from './day/day.module';
+import { CommentModule } from './comment/comment.module';
 
 @Module({
   imports: [
@@ -24,7 +30,13 @@ import { AuthModule } from './auth/auth.module';
       type: 'single',
       url: "localhost:6379",
     }),
-    AuthModule
+    AuthModule,
+    BoardModule,
+    PostsModule,
+    MemberModule,
+    ProjectModule,
+    DayModule,
+    CommentModule,
   ],
   controllers: [AppController],
   providers: [AppService],

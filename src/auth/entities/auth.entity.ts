@@ -1,4 +1,15 @@
-import { Column, Entity, PrimaryColumn } from "typeorm";
+import { BoardUser } from "src/board/entities/board.user.entity";
+import { Post } from "src/posts/entities/post.entity";
+import { Comment } from 'src/comment/entities/comment.entity';
+import { Column, Entity, OneToMany, PrimaryColumn } from "typeorm";
+
+export enum UserProvider{
+  google = 'google',
+  kakao = "kakao",
+  naver = 'naver',
+  apple = "apple",
+  email = 'email'
+}
 
 @Entity()
 export class User {
@@ -11,9 +22,30 @@ export class User {
   @Column({ unique: true, default: null, nullable: true })
   nickname: string;
 
+  @Column()
+  name: string;
+
   @Column({ nullable: true, default: null })
   profileImage: string | null;
 
-  @Column({default: 'google'})
+  @Column({type: 'enum', enum: UserProvider, default: UserProvider.email})
   provider: string;
+
+  @Column({default: null})
+  role: string | null;
+
+  @Column({default: false})
+  isDeleted: boolean;
+
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  createdAt: Date;
+
+  @OneToMany(() => BoardUser, (boardUser) => boardUser.user)
+  boardUsers: BoardUser[];
+
+  @OneToMany(() => Post, post => post.author)
+  posts: Post[];
+
+  @OneToMany(() => Comment, comment => comment.author)
+  comments: Comment[];
 }

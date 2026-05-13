@@ -1,0 +1,44 @@
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, HttpCode } from '@nestjs/common';
+import { BoardService } from './board.service';
+import { CreateBoardDto } from './dto/create-board.dto';
+import { UpdateBoardDto } from './dto/update-board.dto';
+import { JwtGuard } from 'src/auth/gurad/jwt.guard';
+
+@Controller('board')
+@UseGuards(JwtGuard)
+export class BoardController {
+  constructor(private readonly boardService: BoardService) { }
+
+  @Post('create')
+  async createBoard(@Req() req, @Body() createBoardDto: CreateBoardDto) {
+    // console.log(`${req.user.id}님이 보드를 생성하였습니다`)
+    return this.boardService.createBoard(req.user.id, createBoardDto)
+  }
+
+  @Post('/join/:boardCode')
+  async joinBoard(@Req() req, @Param('boardCode') boardCode) {
+    return this.boardService.joinBoard(req.user.id, boardCode)
+  }
+
+  @Post('/new-code/:boardCode')
+  async genereteNewCode(@Req() req, @Param("boardCode") boardCode) {
+    return this.boardService.generateNewCode(req.user, boardCode)
+  }
+
+  @Patch('update/:boardCode')
+  async updateBoard(@Req() req, @Param("boardCode") boardCode, @Body() updateBoardDto: UpdateBoardDto) {
+    // console.log(`${req.user.id}님이 ${boardCode} 보드를 수정하였습니다`)
+    return this.boardService.updateBoard(req.user, boardCode, updateBoardDto)
+  }
+
+  @Get()
+  async getBoards(@Req() req) {
+    return this.boardService.getBoards(req.user.id)
+  }
+
+  @Delete('delete/:boardCode')
+  @HttpCode(204)
+  async deleteBoard(@Param("boardCode") boardCode: string, @Req() req) {
+    return this.boardService.deleteBoard(req.user, boardCode);
+  }
+}

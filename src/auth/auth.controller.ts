@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards, Req, UnauthorizedException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards, Req, UnauthorizedException, UseInterceptors } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthGuard } from '@nestjs/passport';
-
+import { userUpdateDto } from './dto/update.dto';
+import { JwtGuard } from './gurad/jwt.guard';
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -13,22 +14,35 @@ export class AuthController {
   @Get('login/google/callback')
   @UseGuards(AuthGuard('google'))
   async googleLoginCallback(@Req() req) {
-    return await this.authService.googleLogin(req.user);
+    return await this.authService.Login(req.user);
   }
 
-  @Patch('nickname')
-  @UseGuards(AuthGuard('jwt'))
-  async setNickname(@Req() req, @Body('nickname') nickname: string) {
-    const userId = req.user.sub;
-    return await this.authService.setNickname(userId, nickname);
+  @Patch('update/:id')
+  @UseGuards(JwtGuard)
+  async updateUser(@Req() req, @Param('id') targetId, @Body() updateDto: userUpdateDto) {
+    return await this.authService.update(req.user, targetId, updateDto);
   }
 
   @Post('token/refresh')
   async generateAccsessToken(@Body('refreshToken') refreshToken: string) {
-    if(!refreshToken){
-      throw new UnauthorizedException('리프레시 토큰이 없습니다');
-    }
-
     return await this.authService.generateAccsessToken(refreshToken);
+  }
+
+  @Post('logout')
+  @UseGuards(JwtGuard)
+  async logout(@Body('refreshToken') refreshToken: string) {
+    return await this.authService.logout(refreshToken);
+  }
+
+  @Delete('/delete')
+  @UseGuards(JwtGuard)
+  async deleteUser(@Req() req, @Query('id') userId) {
+    return this.authService.deleteUser(req.user, userId);
+  }
+
+  @UseGuards(JwtGuard)
+  @Get('/')
+  async getUserProfile(@Req() req, ){
+    return this.authService.getUserProfile(req.user.id);
   }
 }
