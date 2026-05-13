@@ -5,45 +5,40 @@ import { UpdateBoardDto } from './dto/update-board.dto';
 import { JwtGuard } from 'src/auth/gurad/jwt.guard';
 
 @Controller('board')
+@UseGuards(JwtGuard)
 export class BoardController {
-  constructor(private readonly boardService: BoardService) {}
+  constructor(private readonly boardService: BoardService) { }
 
-  @UseGuards(JwtGuard)
   @Post('create')
   async createBoard(@Req() req, @Body() createBoardDto: CreateBoardDto) {
     // console.log(`${req.user.id}님이 보드를 생성하였습니다`)
     return this.boardService.createBoard(req.user.id, createBoardDto)
   }
 
-  @UseGuards(JwtGuard)
   @Post('/join/:boardCode')
-  async joinBoard(@Req() req, @Param('boardCode') boardCode){
+  async joinBoard(@Req() req, @Param('boardCode') boardCode) {
     return this.boardService.joinBoard(req.user.id, boardCode)
   }
-  
-  @UseGuards(JwtGuard)
+
   @Post('/new-code/:boardCode')
-  async genereteNewCode(@Req() req, @Param("boardCode") boardCode){
+  async genereteNewCode(@Req() req, @Param("boardCode") boardCode) {
     return this.boardService.generateNewCode(req.user, boardCode)
   }
 
-  @UseGuards(JwtGuard)
   @Patch('update/:boardCode')
-  async updateBoard(@Req() req, @Param("boardCode") boardCode, @Body() updateBoardDto: UpdateBoardDto){
+  async updateBoard(@Req() req, @Param("boardCode") boardCode, @Body() updateBoardDto: UpdateBoardDto) {
     // console.log(`${req.user.id}님이 ${boardCode} 보드를 수정하였습니다`)
     return this.boardService.updateBoard(req.user, boardCode, updateBoardDto)
   }
 
-  @UseGuards(JwtGuard)
   @Get()
   async getBoards(@Req() req) {
     return this.boardService.getBoards(req.user.id)
   }
 
-  @UseGuards(JwtGuard)
   @Delete('delete/:boardCode')
   @HttpCode(204)
-  async deleteBoard(@Param("boardCode") boardCode: string, @Req() req){
+  async deleteBoard(@Param("boardCode") boardCode: string, @Req() req) {
     return this.boardService.deleteBoard(req.user, boardCode);
   }
 }

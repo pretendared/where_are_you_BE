@@ -1,4 +1,4 @@
-import { Column, Entity, OneToMany, PrimaryColumn } from "typeorm";
+import { Column, Entity, OneToMany, OneToOne, PrimaryColumn } from "typeorm";
 import { BoardUser } from "./board.user.entity";
 import { Post } from "src/posts/entities/post.entity";
 import { Project } from "src/project/entities/project.entity";
